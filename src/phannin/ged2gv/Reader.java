@@ -17,18 +17,18 @@ import java.util.Properties;
 
 public class Reader {
 	
-	static Properties colors=new Properties();
 	static PrintWriter writer;
+	static ColorMapper colorMapper=new ColorMapper();
 
 	public static void main(String[] args) throws Exception {
 		Map<String, Person> persons = new HashMap<String, Person>();
 		Map<String, Family> families = new HashMap<String, Family>();
 
 		
-		colors.load(new FileInputStream("colors.properties"));
+
 
 		Entity currentEntity =new Person(null);
-		InputStreamReader reader= new InputStreamReader(new FileInputStream("puujalka.ged"), "utf-8");
+		InputStreamReader reader= new InputStreamReader(new FileInputStream("data/puujalka.ged"), "utf-8");
 //		InputStreamReader reader= new InputStreamReader(new FileInputStream("e:\\pasi\\workspace\\javagedcom\\data\\tommiska.ged"), "utf-8");
 		BufferedReader br = new BufferedReader(reader);
 		String line;
@@ -57,7 +57,7 @@ public class Reader {
 //		filterAllPersons(persons, families, "@I5@");
 		String person="@I0047@";
 		filterAllPersons(persons, families, person);
-		writer = new PrintWriter("pedigree.dot", "UTF-8");
+		writer = new PrintWriter("results/pedigree.dot", "UTF-8");
 		writer.println("digraph G {rankdir=LR;");
 		printFamilyTree2(families, persons, person, 0);
 		printMap(persons);
@@ -189,7 +189,7 @@ public class Reader {
 
 	private static void outputConnection(Family family, Person person, Integer len) {
 		if (person!=null && person.isMukaan()) {
-			writer.println("\""+family.getId()+"\" -> \""+ person.getId()+"\" [weight=100 "+getLineColor(person)+" len="+len.toString()+" ];" );
+			writer.println("\""+family.getId()+"\" -> \""+ person.getId()+"\" [weight=100 "+colorMapper.getLineColor(person)+" len="+len.toString()+" ];" );
 	//		person.setMukaan(true);
 		}
 		
@@ -197,7 +197,7 @@ public class Reader {
 
 	private static void outputConnection(Family family, Person person) {
 		if (person!=null) {
-			writer.println("\""+family.getId()+"\" -> \""+ person.getId()+"\" {weight=1 len=1 "+getColor(person)+"};" );
+			writer.println("\""+family.getId()+"\" -> \""+ person.getId()+"\" {weight=1 len=1 "+colorMapper.getColor(person)+"};" );
 	//		person.setMukaan(true);
 		}
 
@@ -219,7 +219,7 @@ public class Reader {
 	private static void outputConnection(Person person, Family family) {
 		if (family!=null && family.isMukaan()) {
 			
-			writer.println("\""+person.getId()+"\" -> \""+ family.getId()+"\" ["+getLineColor(person)+"];" );
+			writer.println("\""+person.getId()+"\" -> \""+ family.getId()+"\" ["+colorMapper.getLineColor(person)+"];" );
 //			family.setMukaan(true);
 		}
 	}
@@ -256,7 +256,7 @@ public class Reader {
 				}
 				currentRank=rank;
 				Person mies=persons.containsKey(fam.getMies()) ? persons.get(fam.getMies()) : new Person(null);
-				writer.println("\""+fam.getId()+"\" [shape=circle style=filled "+getColor(mies)+" label=\""+fam.getYear()+"\"];");
+				writer.println("\""+fam.getId()+"\" [shape=circle style=filled "+colorMapper.getColor(mies)+" label=\""+fam.getYear()+"\"];");
 	
 			}
 		if (!currentRank.isEmpty())
@@ -266,7 +266,7 @@ public class Reader {
 	private static void printMap(Map<String, Person> persons) {
 		for (Person person : persons.values()) {
 			if (person.isMukaan()) {
-				String color = getColor(person);
+				String color = colorMapper.getColor(person);
 				writer.println("\""+person.getId()+"\" [shape=box style=filled fontname=helvetica "+color+
 						" label=\""+person.getFirstname()+"\n"+
 						person.getSurname()+"\n"+
@@ -280,45 +280,6 @@ public class Reader {
 
 
 	
-	
-	private static String getColor(Person person) {
-		// http://www.graphviz.org/content/color-names (colorscheme=paired12)
-
-
-		String colorcheme=colors.getProperty("colorscheme");
-		
-		
-		String color=getColorFor(person.getSurname());
-		if (color != null)
-			return "colorscheme="+colorcheme+ " fillcolor="+color;
-		else
-			return " color=black fillcolor=white ";
-
-	}
-	
-	private static String getColorFor(String name) {
-		for (Object key:colors.keySet()) {
-			if (name.startsWith((String)key))
-				return colors.getProperty((String)key);
-		}
-		return null;
-	}
-	
-	private static String getLineColor(Person person) {
-
-		String colorcheme=colors.getProperty("colorscheme");
-		
-		
-		String color=getColorFor(person.getSurname());
-		if (color != null)
-			return "colorscheme="+colorcheme+ " color="+color + " penwidth=4.0 ";
-		else
-			return " color=black ";
-
-	
-
-
-	}
 	
 
 }
