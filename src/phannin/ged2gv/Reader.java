@@ -21,35 +21,14 @@ public class Reader {
 	static ColorMapper colorMapper=new ColorMapper();
 
 	public static void main(String[] args) throws Exception {
-		Map<String, Person> persons = new HashMap<String, Person>();
-		Map<String, Family> families = new HashMap<String, Family>();
 
-		
+		Pedigree sukupuu = new Pedigree();
+		sukupuu.load("data/puujalka.ged");
+
+		Map<String, Person> persons = sukupuu.getPersons();
+		Map<String, Family> families = sukupuu.getFamilies();
 
 
-		Entity currentEntity =new Person(null);
-		InputStreamReader reader= new InputStreamReader(new FileInputStream("data/puujalka.ged"), "utf-8");
-//		InputStreamReader reader= new InputStreamReader(new FileInputStream("e:\\pasi\\workspace\\javagedcom\\data\\tommiska.ged"), "utf-8");
-		BufferedReader br = new BufferedReader(reader);
-		String line;
-		while ((line = br.readLine()) != null) {
-		   String[] tokens=line.split(" ");
-		   if (tokens[0].equals("0") && tokens.length>2) {
-			   if (tokens[2].equals("INDI")) {
-				   currentEntity=new Person(tokens[1]);
-				   persons.put(tokens[1], (Person)currentEntity);
-			   }
-			   if (tokens[2].equals("FAM")) {
-				   currentEntity=new Family(tokens[1]);
-				   families.put(tokens[1], (Family)currentEntity);
-			   }
-
-		   }
-		   else if (!tokens[0].equals("0")) {
-			   currentEntity.addLine(line);
-		   }
-		}
-		br.close();
 
 //		printMap(persons);
 //		printFamilyMap(families, persons);
