@@ -3,7 +3,7 @@ package phannin.ged2gv;
 import phannin.ged2gv.Entity;
 import phannin.ged2gv.Event;
 
-public class Person implements Entity {
+class Person implements Entity {
 
     private String id = "";
     private String surname = "";

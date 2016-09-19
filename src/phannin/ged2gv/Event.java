@@ -1,6 +1,6 @@
 package phannin.ged2gv;
 
-public class Event {
+class Event {
 
     private String time = "";
     private String place = "";

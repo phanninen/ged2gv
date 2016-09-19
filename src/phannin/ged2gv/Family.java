@@ -3,7 +3,7 @@ package phannin.ged2gv;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Family implements Entity, Comparable<Family> {
+class Family implements Entity, Comparable<Family> {
     private String id = "";
     private String mies = "";
     private String vaimo = "";

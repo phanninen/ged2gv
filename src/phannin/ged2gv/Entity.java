@@ -1,6 +1,6 @@
 package phannin.ged2gv;
 
-public interface Entity {
+interface Entity {
 
     void addLine(String line);
 

@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Created by pasi on 11.9.2016.
  */
-public class Pedigree {
+class Pedigree {
     private Map<String, Person> persons = new HashMap<String, Person>();
     private Map<String, Family> families = new HashMap<String, Family>();
 
