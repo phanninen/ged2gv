@@ -12,24 +12,60 @@ import org.bson.conversions.Bson;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Map;
 
 /**
  * Created by pasi on 30.11.2016.
  */
-public class MongoDao {
+public class MongoPedigree implements Pedigree {
     private MongoDatabase db;
 
-    public MongoDao() {
+    public MongoPedigree() {
         MongoClient mongoClient = new MongoClient();
         this.db = mongoClient.getDatabase("test");
 
     }
 
-    public void storePedigree(Pedigree sukupuu) {
+    @Override
+    public Person getPerson(String id) {
+        return null;
+    }
+
+    @Override
+    public Family getFamily(String id) {
+        return null;
+    }
+
+    @Override
+    public void addPerson(String id, Person person) {
+        storeToCollection("persons", id, person);
+    }
+
+    @Override
+    public void addFamily(String id, Family family) {
+        storeToCollection("families", id, family);
+    }
+
+    @Override
+    public void clearFilter() {
+
+    }
+
+    @Override
+    public Filter filterAllAncestors(String personId) {
+        return new Filter();
+    }
+
+    @Override
+    public Filter filterWithAncestors(String personId, String[] targetPersons) {
+        return new Filter();
+    }
+
+/*    public void storePedigree(Pedigree sukupuu) {
 
         sukupuu.getPersons().forEach((k, v) -> storeToCollection("persons", k, v));
         sukupuu.getFamilies().forEach((k, v) -> storeToCollection("families", k, v));
-    }
+    }*/
 
     private void storeToCollection(String collection, String k, Entity v) {
         try {
