@@ -2,17 +2,12 @@ package phannin.ged2gv;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
-import org.bson.BsonDocument;
 import org.bson.Document;
-import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.conversions.Bson;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Map;
 
 /**
  * Created by pasi on 30.11.2016.
@@ -46,20 +41,6 @@ public class MongoPedigree implements Pedigree {
         storeToCollection("families", id, family);
     }
 
-    @Override
-    public void clearFilter() {
-
-    }
-
-    @Override
-    public Filter filterAllAncestors(String personId) {
-        return new Filter();
-    }
-
-    @Override
-    public Filter filterWithAncestors(String personId, String[] targetPersons) {
-        return new Filter();
-    }
 
 /*    public void storePedigree(Pedigree sukupuu) {
 
