@@ -12,13 +12,13 @@ public class InMemoryPedigree implements Pedigree {
 
 
     @Override
-    public void addPerson(String id, Person person) {
-        persons.put(id, person);
+    public void addPerson(Person person) {
+        persons.put(person.getId(), person);
     }
 
     @Override
-    public void addFamily(String id, Family family) {
-        families.put(id, family);
+    public void addFamily(Family family) {
+        families.put(family.getId(), family);
     }
 
     @Override

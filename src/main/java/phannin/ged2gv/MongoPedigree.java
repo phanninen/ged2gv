@@ -9,10 +9,15 @@ import org.bson.Document;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import static com.mongodb.client.model.Projections.excludeId;
+import static com.mongodb.client.model.Projections.fields;
+
 /**
  * Created by pasi on 30.11.2016.
  */
 public class MongoPedigree implements Pedigree {
+    public static final String PERSONS = "persons";
+    public static final String FAMILIES = "families";
     private MongoDatabase db;
 
     public MongoPedigree() {
@@ -23,22 +28,36 @@ public class MongoPedigree implements Pedigree {
 
     @Override
     public Person getPerson(String id) {
-        return null;
+        try {
+            Document doc = find(PERSONS, id);
+            return doc != null ? toPerson(doc) : null;
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
     @Override
     public Family getFamily(String id) {
-        return null;
+
+        try {
+            Document doc = find(FAMILIES, id);
+            return doc != null ? toFamily(doc) : null;
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+
     }
 
     @Override
-    public void addPerson(String id, Person person) {
-        storeToCollection("persons", id, person);
+    public void addPerson(Person person) {
+        storeToCollection(PERSONS, person.getId(), person);
     }
 
     @Override
-    public void addFamily(String id, Family family) {
-        storeToCollection("families", id, family);
+    public void addFamily(Family family) {
+        storeToCollection(FAMILIES, family.getId(), family);
     }
 
 
@@ -59,6 +78,13 @@ public class MongoPedigree implements Pedigree {
         }
     }
 
+    private Document find(String collection, String id) {
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("id", id);
+        return db.getCollection(collection).find(whereQuery).projection(fields(excludeId())).first();
+
+
+    }
 
     private boolean exists(String collection, String id) {
         BasicDBObject whereQuery = new BasicDBObject();
@@ -68,23 +94,35 @@ public class MongoPedigree implements Pedigree {
     }
 
     private void insert(String collection, String id, Entity entity) throws IOException {
-        this.db.getCollection(collection).insertOne(getDocument(entity));
+        this.db.getCollection(collection).insertOne(toDocument(entity));
 
     }
 
     private void update(String collection, String id, Entity entity) throws IOException {
 
-        Document doc = getDocument(entity);
+        Document doc = toDocument(entity);
         this.db.getCollection(collection).updateOne(new Document("id", id), new Document("$set", doc));
 
 
     }
 
-    private Document getDocument(Object object) throws IOException {
+    private Document toDocument(Object object) throws IOException {
         StringWriter writer = new StringWriter();
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(writer, object);
         String json = writer.toString();
         return Document.parse(json);
+    }
+
+    private Person toPerson(Document doc) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(doc.toJson(), Person.class);
+
+    }
+
+    private Family toFamily(Document doc) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(doc.toJson(), Family.class);
+
     }
 }

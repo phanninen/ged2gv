@@ -98,6 +98,7 @@ public class Filter {
 
 
     private static void debug(String str) {
-        System.out.println(str);
+
+        //System.out.println(str);
     }
 }
