@@ -21,8 +21,8 @@ public class Reader {
         String[] targets = targetPersons;
 
 
-//        Pedigree sukupuu = new InMemoryPedigree();
-        Pedigree sukupuu = new MongoPedigree();
+        Pedigree sukupuu = new InMemoryPedigree();
+//        Pedigree sukupuu = new MongoPedigree();
 
         Long start = System.currentTimeMillis();
 
@@ -38,9 +38,13 @@ public class Reader {
         System.out.println("filtertime=" + (System.currentTimeMillis() - start));
         start = System.currentTimeMillis();
 
+/*
         PedigreeWriter writer = new PedigreeWriter("results/pedigree.dot");
         writer.writePedigree(sukupuu, notall, person);
+*/
 
+        DecendantsWriter writer = new DecendantsWriter("results/pedigree.dot");
+        writer.writeDecendants(sukupuu, all, person);
         System.out.println("writetime=" + (System.currentTimeMillis() - start));
 
     }

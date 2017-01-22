@@ -10,6 +10,9 @@ public class Family implements Entity, Comparable<Family> {
     private String husband = "";
     private String wife = "";
     private List<String> children = new ArrayList<>();
+    private List<String> notes = new ArrayList<>();
+    private List<SourceRef> sources = new ArrayList<>();
+
 
     private Event marriage;
 
@@ -60,6 +63,13 @@ public class Family implements Entity, Comparable<Family> {
         this.marriage = marriage;
     }
 
+    public List<String> getNotes() {
+        return notes;
+    }
+
+    public List<SourceRef> getSources() {
+        return sources;
+    }
 
     private Event currentEvent;
 
@@ -78,6 +88,8 @@ public class Family implements Entity, Comparable<Family> {
             this.wife = tokens[2];
         if (tokens[0].equals("1") && tokens[1].equals("CHIL")) //
             this.children.add(tokens[2]);
+        if (tokens[0].equals("1") && tokens[1].equals("NOTE")) // Family Note
+            this.notes.add(tokens[2]);
         if (tokens[0].equals("1") && tokens[1].equals("MARR")) {
             this.marriage = new Event();
             currentEvent = this.marriage;
@@ -90,6 +102,34 @@ public class Family implements Entity, Comparable<Family> {
             if (currentEvent != null)
                 currentEvent.setPlace(tokens[2]);
         }
+        if (tokens[0].equals("2") && tokens[1].equals("SOUR")) { // Event Source
+            if (currentEvent != null) {
+                SourceRef source = new SourceRef(tokens[2]);
+                currentEvent.getSources().add(source);
+
+            }
+        }
+        if (tokens[0].equals("3") && tokens[1].equals("NOTE")) // Event Source Note
+            if (currentEvent != null)
+                currentEvent.getSources().get(currentEvent.getSources().size() - 1).getNotes().add(tokens[2]);
+        if (tokens[0].equals("3") && tokens[1].equals("PAGE")) // Event Source Page
+            if (currentEvent != null)
+                currentEvent.getSources().get(currentEvent.getSources().size() - 1).setPage(tokens[2]);
+
+        if (tokens[0].equals("1") && tokens[1].equals("SOUR")) { //Family Source
+            SourceRef source = new SourceRef(tokens[2]);
+            this.sources.add(source);
+            currentEvent = source;
+        }
+        if (tokens[0].equals("2") && tokens[1].equals("NOTE")) {// Event Note
+            if (currentEvent != null)
+                currentEvent.getNotes().add(tokens[2]);
+            else
+                notes.add(tokens[2]);
+        }
+        if (tokens[0].equals("2") && tokens[1].equals("PAGE")) //
+            ((SourceRef) currentEvent).setPage(tokens[2]);
+
 
 
     }
@@ -124,4 +164,16 @@ public class Family implements Entity, Comparable<Family> {
         return o.getYear().compareTo(this.getYear());
     }
 
+    @Override
+    public String toString() {
+        return "Family{" +
+                "id='" + id + '\'' +
+                ", husband='" + husband + '\'' +
+                ", wife='" + wife + '\'' +
+                ", children=" + children +
+                ", notes=" + notes +
+                ", sources=" + sources +
+                ", marriage=" + marriage +
+                '}';
+    }
 }

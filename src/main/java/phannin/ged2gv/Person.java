@@ -2,6 +2,9 @@ package phannin.ged2gv;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Person implements Entity {
 
     private String id = "";
@@ -12,6 +15,9 @@ public class Person implements Entity {
     private String parentsId;
     private Event birth;
     private Event death;
+    private List<String> notes = new ArrayList<>();
+    private List<SourceRef> sources = new ArrayList<>();
+
 
     public Person() {
     }
@@ -114,6 +120,8 @@ public class Person implements Entity {
             this.parentsId = tokens[2];
         if (tokens[0].equals("1") && tokens[1].equals("FAMS")) //
             this.familyId = tokens[2];
+        if (tokens[0].equals("1") && tokens[1].equals("NOTE")) //
+            this.notes.add(tokens[2]);
         if (tokens[0].equals("1") && tokens[1].equals("BIRT")) {
             this.birth = new Event();
             currentEvent = this.birth;
@@ -122,6 +130,12 @@ public class Person implements Entity {
             this.death = new Event();
             currentEvent = this.death;
         }
+        if (tokens[0].equals("1") && tokens[1].equals("SOUR")) {
+            SourceRef source = new SourceRef(tokens[2]);
+            this.sources.add(source);
+            currentEvent = source;
+        }
+
         if (tokens[0].equals("2") && tokens[1].equals("DATE")) {
             if (currentEvent != null)
                 currentEvent.setTime(tokens[2]);
@@ -130,6 +144,32 @@ public class Person implements Entity {
             if (currentEvent != null)
                 currentEvent.setPlace(tokens[2]);
         }
+        if (tokens[0].equals("2") && tokens[1].equals("SOUR")) {
+            if (currentEvent != null) {
+                SourceRef source = new SourceRef(tokens[2]);
+                currentEvent.getSources().add(source);
+
+            }
+        }
+        if (tokens[0].equals("3") && tokens[1].equals("PAGE")) //
+            if (currentEvent != null)
+                currentEvent.getSources().get(currentEvent.getSources().size() - 1).setPage(tokens[2]);
+        if (tokens[0].equals("3") && tokens[1].equals("NOTE")) //
+            if (currentEvent != null) {
+                if (currentEvent.getSources().isEmpty())
+                    currentEvent.getNotes().add(tokens[2]);
+                else
+                    currentEvent.getSources().get(currentEvent.getSources().size() - 1).getNotes().add(tokens[2]);
+            }
+        if (tokens[0].equals("2") && tokens[1].equals("NOTE")) {//
+            if (currentEvent != null)
+                currentEvent.getNotes().add(tokens[2]);
+            else
+                notes.add(tokens[2]);
+        }
+        if (tokens[0].equals("2") && tokens[1].equals("PAGE")) //
+            ((SourceRef) currentEvent).setPage(tokens[2]);
+
     }
 
 
@@ -149,5 +189,19 @@ public class Person implements Entity {
             return "";
     }
 
-
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id='" + id + '\'' +
+                ", surname='" + surname + '\'' +
+                ", firstname='" + firstname + '\'' +
+                ", sex='" + sex + '\'' +
+                ", familyId='" + familyId + '\'' +
+                ", parentsId='" + parentsId + '\'' +
+                ", birth=" + birth +
+                ", death=" + death +
+                ", notes=" + notes +
+                ", sources=" + sources +
+                '}';
+    }
 }

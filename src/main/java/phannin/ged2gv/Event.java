@@ -2,10 +2,15 @@ package phannin.ged2gv;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class Event {
 
     private String time = "";
     private String place = "";
+    protected List<String> notes = new ArrayList<>();
+    private List<SourceRef> sources = new ArrayList<>();
 
     public String getTime() {
         return time;
@@ -23,6 +28,10 @@ class Event {
         this.place = place;
     }
 
+    public List<SourceRef> getSources() {
+        return sources;
+    }
+
     @JsonIgnore
     public String getYear() {
         if (this.time.length() > 4)
@@ -31,5 +40,17 @@ class Event {
             return this.time;
     }
 
+    public List<String> getNotes() {
+        return notes;
+    }
 
+    @Override
+    public String toString() {
+        return "Event{" +
+                "time='" + time + '\'' +
+                ", place='" + place + '\'' +
+                ", notes=" + notes +
+                ", sources=" + sources +
+                '}';
+    }
 }

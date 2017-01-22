@@ -32,7 +32,7 @@ public class PedigreeWriter {
         if (person != null) { //&& generation<10
             Family fam = pedigree.getFamily(person.getParentsId());
             if (fam != null) {
-
+                outputFamily(fam, pedigree);
                 if (fam.hasHusbamd() && filter.containsPerson(fam.getHusband())) {
                     writeConnections(pedigree, filter, fam.getHusband(), generation + 1);
                     outputConnection(fam, pedigree.getPerson(fam.getHusband()), 10);
@@ -134,6 +134,15 @@ public class PedigreeWriter {
 
     }
 
+    private void outputFamily(Family fam, Pedigree pedigree) {
+        System.out.println("-------------------");
+        Person mies = pedigree.getPerson(fam.getHusband());
+        if (mies != null)
+            System.out.println("Mies: " + mies.getFirstname() + " " + mies.getSurname());
+        Person nainen = pedigree.getPerson(fam.getWife());
+        if (nainen != null)
+            System.out.println("Vaimo: " + nainen.getFirstname() + " " + nainen.getSurname());
+    }
 
     /*
 

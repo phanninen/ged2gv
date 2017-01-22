@@ -9,7 +9,8 @@ import java.util.*;
 public class InMemoryPedigree implements Pedigree {
     private Map<String, Person> persons = new HashMap<>();
     private Map<String, Family> families = new HashMap<>();
-
+    private Map<String, Source> sources = new HashMap<>();
+    private Map<String, Note> notes = new HashMap<>();
 
     @Override
     public void addPerson(Person person) {
@@ -31,11 +32,27 @@ public class InMemoryPedigree implements Pedigree {
         return families.get(id);
     }
 
+    @Override
+    public void addSource(Source source) {
+        sources.put(source.getId(), source);
+    }
 
+    @Override
+    public Source getSource(String id) {
+        return sources.get(id);
+    }
 
-
+    @Override
+    public void addNote(Note note) {
+        notes.put(note.getId(), note);
+    }
 
     private static void debug(String str) {
 //		writer.println(str);
+    }
+
+    public void dump() {
+        //   sources.forEach((s, source) -> System.out.println(source.toString()));
+        //   families.forEach((s, note) -> System.out.println(note.toString()));
     }
 }

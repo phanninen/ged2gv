@@ -60,6 +60,25 @@ public class MongoPedigree implements Pedigree {
         storeToCollection(FAMILIES, family.getId(), family);
     }
 
+    @Override
+    public void addSource(Source family) {
+
+    }
+
+    @Override
+    public void addNote(Note note) {
+
+    }
+
+    @Override
+    public Source getSource(String id) {
+        return null;
+    }
+
+    @Override
+    public void dump() {
+
+    }
 
 /*    public void storePedigree(Pedigree sukupuu) {
 
