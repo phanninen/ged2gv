@@ -11,12 +11,14 @@ public class Start extends JDialog {
     private JComboBox fileNameField;
     private JTextField targetPersonsField;
     private JCheckBox useCheckBox;
+    private JRadioButton ancestorsRadioButton;
+    private JRadioButton desendanrsRadioButton;
 
     public Start() {
         startPersonField.setText("@I0047@");
         targetPersonsField.setText("@I0424@");
         fileNameField.addItem("");
-        fileNameField.addItem("data/tommiska.ged");
+        fileNameField.addItem("data/Tommiska.ged");
         fileNameField.addItem("data/puujalka.ged");
         fileNameField.addItem("data/Hänninen.ged");
         //.setText("data/puujalka.ged");
@@ -75,7 +77,7 @@ public class Start extends JDialog {
             sukupuu.dump();
 
             Filter filter;
-            if (hasTarget)
+            if (useCheckBox.isSelected())
                 filter = Filter.factory().forAncestors(person, targets, sukupuu);
             else
                 filter = Filter.factory().allAncestors(person, sukupuu);
@@ -83,10 +85,13 @@ public class Start extends JDialog {
             System.out.println("filtertime=" + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
 
-//            PedigreeWriter writer = new PedigreeWriter("results/pedigree.dot");
-//            writer.writePedigree(sukupuu, filter, person);
-            DecendantsWriter writer = new DecendantsWriter("results/pedigree.dot");
-            writer.writeDecendants(sukupuu, filter, person);
+            if (ancestorsRadioButton.isSelected()) {
+                PedigreeWriter writer = new PedigreeWriter("results/pedigree.dot");
+                writer.writePedigree(sukupuu, filter, person);
+            } else {
+                DecendantsWriter writer = new DecendantsWriter("results/pedigree.dot");
+                writer.writeDecendants(sukupuu, filter, person);
+            }
 
 
         } catch (Exception e) {

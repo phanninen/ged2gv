@@ -5,6 +5,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import phannin.ged2gv.domain.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -18,6 +19,8 @@ import static com.mongodb.client.model.Projections.fields;
 public class MongoPedigree implements Pedigree {
     public static final String PERSONS = "persons";
     public static final String FAMILIES = "families";
+    public static final String SOURCES = "sources";
+    public static final String NOTES = "notes";
     private MongoDatabase db;
 
     public MongoPedigree() {
@@ -61,18 +64,39 @@ public class MongoPedigree implements Pedigree {
     }
 
     @Override
-    public void addSource(Source family) {
+    public void addSource(Source source) {
+        storeToCollection(SOURCES, source.getId(), source);
 
     }
 
     @Override
     public void addNote(Note note) {
+        storeToCollection(NOTES, note.getId(), note);
 
     }
 
     @Override
     public Source getSource(String id) {
-        return null;
+        try {
+            Document doc = find(SOURCES, id);
+            return doc != null ? (Source) toObject(doc, Source.class) : null;
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+
+    }
+
+    @Override
+    public Note getNote(String id) {
+        try {
+            Document doc = find(NOTES, id);
+            return doc != null ? (Note) toObject(doc, Note.class) : null;
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+
     }
 
     @Override
@@ -142,6 +166,12 @@ public class MongoPedigree implements Pedigree {
     private Family toFamily(Document doc) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(doc.toJson(), Family.class);
+
+    }
+
+    private Object toObject(Document doc, Class clazz) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(doc.toJson(), clazz);
 
     }
 }

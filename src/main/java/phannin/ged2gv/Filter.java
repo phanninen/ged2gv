@@ -1,5 +1,8 @@
 package phannin.ged2gv;
 
+import phannin.ged2gv.domain.Family;
+import phannin.ged2gv.domain.Person;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;

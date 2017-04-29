@@ -1,4 +1,4 @@
-package phannin.ged2gv;
+package phannin.ged2gv.domain;
 
 /**
  * Created by pasi on 8.1.2017.

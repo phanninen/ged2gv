@@ -1,4 +1,4 @@
-package phannin.ged2gv;
+package phannin.ged2gv.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -11,7 +11,7 @@ public class Person implements Entity {
     private String surname = "";
     private String firstname = "";
     private String sex = "";
-    private String familyId = "";
+    private List<String> familyId = new ArrayList<>();
     private String parentsId;
     private Event birth;
     private Event death;
@@ -59,11 +59,11 @@ public class Person implements Entity {
         this.sex = sex;
     }
 
-    public String getFamilyId() {
+    public List<String> getFamilyId() {
         return familyId;
     }
 
-    public void setFamilyId(String familyId) {
+    public void setFamilyId(List<String> familyId) {
         this.familyId = familyId;
     }
 
@@ -119,7 +119,7 @@ public class Person implements Entity {
         if (tokens[0].equals("1") && tokens[1].equals("FAMC")) //
             this.parentsId = tokens[2];
         if (tokens[0].equals("1") && tokens[1].equals("FAMS")) //
-            this.familyId = tokens[2];
+            this.familyId.add(tokens[2]);
         if (tokens[0].equals("1") && tokens[1].equals("NOTE")) //
             this.notes.add(tokens[2]);
         if (tokens[0].equals("1") && tokens[1].equals("BIRT")) {
@@ -141,7 +141,7 @@ public class Person implements Entity {
                 currentEvent.setTime(tokens[2]);
         }
         if (tokens[0].equals("2") && tokens[1].equals("PLAC")) {
-            if (currentEvent != null)
+            if (currentEvent != null && tokens.length > 2)
                 currentEvent.setPlace(tokens[2]);
         }
         if (tokens[0].equals("2") && tokens[1].equals("SOUR")) {

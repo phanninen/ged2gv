@@ -1,5 +1,7 @@
 package phannin.ged2gv;
 
+import phannin.ged2gv.domain.Person;
+
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Properties;

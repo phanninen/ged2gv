@@ -1,4 +1,4 @@
-package phannin.ged2gv;
+package phannin.ged2gv.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

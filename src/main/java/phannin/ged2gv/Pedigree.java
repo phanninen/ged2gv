@@ -1,9 +1,8 @@
 package phannin.ged2gv;
 
+import phannin.ged2gv.domain.*;
+
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by pasi on 11.9.2016.
@@ -25,6 +24,8 @@ public interface Pedigree {
     Family getFamily(String id);
 
     Source getSource(String id);
+
+    Note getNote(String id);
 
     default void load(String gedcomFile) throws FileNotFoundException, UnsupportedEncodingException, IOException {
         Entity currentEntity = new Person(null);

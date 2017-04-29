@@ -1,5 +1,8 @@
 package phannin.ged2gv;
 
+import phannin.ged2gv.domain.Family;
+import phannin.ged2gv.domain.Person;
+
 import java.io.PrintWriter;
 
 /**
@@ -30,20 +33,22 @@ public class DecendantsWriter {
         Person person = pedigree.getPerson(personId);
         System.out.println(person.toString());
         if (person != null) { //&& generation<10
-            Family fam = pedigree.getFamily(person.getFamilyId());
-            if (fam != null) {
-                //               outputFamily(fam, pedigree);
-                if (fam.getHusband().equals(personId) && fam.getWife() != null)
-                    outputConnection(pedigree.getPerson(fam.getWife()), fam);
-                if (fam.getWife().equals(personId) && fam.getHusband() != null)
-                    outputConnection(pedigree.getPerson(fam.getHusband()), fam);
-                outputConnection(person, fam);
-                for (String child : fam.getChildren()) {
-                    outputConnection(fam, pedigree.getPerson(child), 100);
-                    writeConnections(pedigree, filter, child);
+            for (String fid : person.getFamilyId()) {
+                Family fam = pedigree.getFamily(fid);
+                if (fam != null) {
+                    //               outputFamily(fam, pedigree);
+                    if (fam.getHusband().equals(personId) && fam.getWife() != null)
+                        outputConnection(pedigree.getPerson(fam.getWife()), fam);
+                    if (fam.getWife().equals(personId) && fam.getHusband() != null)
+                        outputConnection(pedigree.getPerson(fam.getHusband()), fam);
+                    outputConnection(person, fam);
+                    for (String child : fam.getChildren()) {
+                        outputConnection(fam, pedigree.getPerson(child), 100);
+                        writeConnections(pedigree, filter, child);
+                    }
+
+
                 }
-
-
             }
         }
     }
@@ -52,42 +57,74 @@ public class DecendantsWriter {
         Person person = pedigree.getPerson(personId);
         if (person != null) { //&& generation<10
             printPerson(person);
-            Family fam = pedigree.getFamily(person.getFamilyId());
-            if (fam != null) {
-                //               outputFamily(fam, pedigree);
-                if (fam.getHusband().equals(personId) && fam.getWife() != null && !fam.getWife().isEmpty())
-                    printPerson(pedigree.getPerson(fam.getWife()));
-                if (fam.getWife().equals(personId) && fam.getHusband() != null && !fam.getHusband().isEmpty())
-                    printPerson(pedigree.getPerson(fam.getHusband()));
-                for (String child : fam.getChildren()) {
-                    writePersons(pedigree, filter, child);
+            for (String fid : person.getFamilyId()) {
+                Family fam = pedigree.getFamily(fid);
+                if (fam != null) {
+                    //               outputFamily(fam, pedigree);
+                    if (fam.getHusband().equals(personId) && fam.getWife() != null && !fam.getWife().isEmpty())
+                        printPerson(pedigree.getPerson(fam.getWife()));
+                    if (fam.getWife().equals(personId) && fam.getHusband() != null && !fam.getHusband().isEmpty())
+                        printPerson(pedigree.getPerson(fam.getHusband()));
+                    for (String child : fam.getChildren()) {
+                        writePersons(pedigree, filter, child);
+                    }
+
+
                 }
-
-
             }
         }
     }
 
+    private void writePersons2(Pedigree pedigree, Filter filter, String personId) {
+        Person person = pedigree.getPerson(personId);
+
+        if (person != null) { //&& generation<10
+            //           printPerson(person);
+            for (String fid : person.getFamilyId()) {
+                Family fam = pedigree.getFamily(fid);
+                if (fam != null) {
+                    //               outputFamily(fam, pedigree);
+                    if (fam.getHusband().equals(personId) && fam.getWife() != null && !fam.getWife().isEmpty())
+                        printPerson(pedigree.getPerson(fam.getWife()));
+                    if (fam.getWife().equals(personId) && fam.getHusband() != null && !fam.getHusband().isEmpty())
+                        printPerson(pedigree.getPerson(fam.getHusband()));
+                    for (String childId : fam.getChildren()) {
+                        Person child = pedigree.getPerson(childId);
+                        printPerson(child);
+                    }
+                    for (String child : fam.getChildren()) {
+                        writePersons2(pedigree, filter, child);
+                    }
+
+
+                }
+            }
+        }
+    }
+
+
     private void writeFamilies(Pedigree pedigree, Filter filter, String personId) {
         Person person = pedigree.getPerson(personId);
         if (person != null) { //&& generation<10
-            Family fam = pedigree.getFamily(person.getFamilyId());
-            if (fam != null) {
-                Person mies = fam.hasHusbamd() ? pedigree.getPerson(fam.getHusband()) : new Person(null);
-                writer.println("\"" + fam.getId() + "\" [shape=circle style=filled " + colorMapper.getColor(mies) + " label=\"" + fam.getYear() + "\"];");
+            for (String fid : person.getFamilyId()) {
+                Family fam = pedigree.getFamily(fid);
+                if (fam != null) {
+                    Person mies = fam.hasHusbamd() ? pedigree.getPerson(fam.getHusband()) : new Person(null);
+                    writer.println("\"" + fam.getId() + "\" [shape=circle style=filled " + colorMapper.getColor(mies) + " label=\"" + fam.getYear() + "\"];");
 
-                for (String child : fam.getChildren()) {
-                    writeFamilies(pedigree, filter, child);
+                    for (String child : fam.getChildren()) {
+                        writeFamilies(pedigree, filter, child);
+                    }
+
+
                 }
-
-
             }
         }
     }
 
     private void outputConnection(Family family, Person person, Integer len) {
         if (person != null) {
-            writer.println("\"" + family.getId() + "\" -> \"" + person.getId() + "\" [weight=100 " + colorMapper.getLineColor(person) + " len=" + len.toString() + " ];");
+            writer.println("\"" + family.getId() + "\" -> \"" + person.getId() + "\" [weight=1000 " + colorMapper.getLineColor(person) + " len=" + len.toString() + " ];");
         }
 
     }
@@ -96,7 +133,7 @@ public class DecendantsWriter {
     private void outputConnection(Person person, Family family) {
         if (family != null && person != null) {
 
-            writer.println("\"" + person.getId() + "\" -> \"" + family.getId() + "\" [" + colorMapper.getLineColor(person) + " weight=10 constraint=true];");
+            writer.println("\"" + person.getId() + "\" -> \"" + family.getId() + "\" [" + colorMapper.getLineColor(person) + " weight=1 constraint=true];");
         }
     }
 

@@ -1,5 +1,8 @@
 package phannin.ged2gv;
 
+import phannin.ged2gv.domain.Family;
+import phannin.ged2gv.domain.Person;
+
 import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collectors;

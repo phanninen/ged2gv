@@ -1,6 +1,10 @@
 package phannin.ged2gv;
 
-import java.io.*;
+import phannin.ged2gv.domain.Family;
+import phannin.ged2gv.domain.Note;
+import phannin.ged2gv.domain.Person;
+import phannin.ged2gv.domain.Source;
+
 import java.util.*;
 
 /**
@@ -45,6 +49,11 @@ public class InMemoryPedigree implements Pedigree {
     @Override
     public void addNote(Note note) {
         notes.put(note.getId(), note);
+    }
+
+    @Override
+    public Note getNote(String id) {
+        return notes.get(id);
     }
 
     private static void debug(String str) {
