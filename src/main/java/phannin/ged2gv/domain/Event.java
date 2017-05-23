@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.List;
 
-class Event {
+public class Event {
 
     private String time = "";
     private String place = "";

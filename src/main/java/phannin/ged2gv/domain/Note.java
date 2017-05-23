@@ -1,5 +1,7 @@
 package phannin.ged2gv.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Created by pasi on 8.1.2017.
  */
@@ -16,16 +18,10 @@ public class Note implements Entity {
         this.teksti.append(teksti);
     }
 
-    @Override
-    public void addLine(String line) {
-        String[] tokens = line.split(" ", 3);
-
-        if (tokens[0].equals("1") && tokens[1].equals("CONC"))
-            this.teksti.append(tokens[2]);
-        if (tokens[0].equals("1") && tokens[1].equals("CONT"))
-            this.teksti.append("\n").append(tokens[2]);
-
+    public void setTeksti(StringBuffer teksti) {
+        this.teksti = teksti;
     }
+
 
     @Override
     public String getId() {
@@ -35,6 +31,11 @@ public class Note implements Entity {
 
     public String getTeksti() {
         return teksti.toString();
+    }
+
+    @JsonIgnore
+    public StringBuffer getTekstiBuffer() {
+        return teksti;
     }
 
 

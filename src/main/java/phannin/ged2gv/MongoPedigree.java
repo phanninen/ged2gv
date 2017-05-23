@@ -9,6 +9,7 @@ import phannin.ged2gv.domain.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.List;
 
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
@@ -26,6 +27,7 @@ public class MongoPedigree implements Pedigree {
     public MongoPedigree(String db) {
         MongoClient mongoClient = new MongoClient();
         this.db = mongoClient.getDatabase(db);
+
 
     }
 

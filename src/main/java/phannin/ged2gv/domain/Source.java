@@ -45,17 +45,6 @@ public class Source implements Entity {
         this.author = author;
     }
 
-    public void addLine(String line) {
-        String[] tokens = line.split(" ", 3);
-
-        if (tokens[0].equals("1") && tokens[1].equals("TITL"))
-            this.title = tokens[2];
-        if (tokens[0].equals("1") && tokens[1].equals("PUBL"))
-            this.publisher = tokens[2];
-        if (tokens[0].equals("1") && tokens[1].equals("AUTH"))
-            this.author = tokens[2];
-
-    }
 
     public String toString() {
         return this.id + "/" + this.title + "/" + this.author + "/" + this.publisher;

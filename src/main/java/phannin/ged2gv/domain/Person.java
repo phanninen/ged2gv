@@ -91,7 +91,24 @@ public class Person implements Entity {
     public void setDeath(Event death) {
         this.death = death;
     }
-/*
+
+    public List<String> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(List<String> notes) {
+        this.notes = notes;
+    }
+
+    public List<SourceRef> getSources() {
+        return sources;
+    }
+
+    public void setSources(List<SourceRef> sources) {
+        this.sources = sources;
+    }
+
+ /*
 
     @JsonIgnore
     public boolean isMukaan() {
@@ -102,75 +119,6 @@ public class Person implements Entity {
 //	}
 */
 
-    private Event currentEvent;
-
-    public void addLine(String line) {
-        String[] tokens = line.split(" ", 3);
-
-        if (tokens[0].equals("1"))
-            currentEvent = null;
-
-        if (tokens[0].equals("2") && tokens[1].equals("GIVN")) //		2 GIVN Basilius Jaakonpoika
-            this.firstname = tokens[2];
-        if (tokens[0].equals("2") && tokens[1].equals("SURN") && this.surname.length() == 0) //		2 SURN Hänninen
-            this.surname = tokens[2];
-        if (tokens[0].equals("1") && tokens[1].equals("SEX")) //		1 SEX M
-            this.sex = tokens[2];
-        if (tokens[0].equals("1") && tokens[1].equals("FAMC")) //
-            this.parentsId = tokens[2];
-        if (tokens[0].equals("1") && tokens[1].equals("FAMS")) //
-            this.familyId.add(tokens[2]);
-        if (tokens[0].equals("1") && tokens[1].equals("NOTE")) //
-            this.notes.add(tokens[2]);
-        if (tokens[0].equals("1") && tokens[1].equals("BIRT")) {
-            this.birth = new Event();
-            currentEvent = this.birth;
-        }
-        if (tokens[0].equals("1") && tokens[1].equals("DEAT")) {
-            this.death = new Event();
-            currentEvent = this.death;
-        }
-        if (tokens[0].equals("1") && tokens[1].equals("SOUR")) {
-            SourceRef source = new SourceRef(tokens[2]);
-            this.sources.add(source);
-            currentEvent = source;
-        }
-
-        if (tokens[0].equals("2") && tokens[1].equals("DATE")) {
-            if (currentEvent != null)
-                currentEvent.setTime(tokens[2]);
-        }
-        if (tokens[0].equals("2") && tokens[1].equals("PLAC")) {
-            if (currentEvent != null && tokens.length > 2)
-                currentEvent.setPlace(tokens[2]);
-        }
-        if (tokens[0].equals("2") && tokens[1].equals("SOUR")) {
-            if (currentEvent != null) {
-                SourceRef source = new SourceRef(tokens[2]);
-                currentEvent.getSources().add(source);
-
-            }
-        }
-        if (tokens[0].equals("3") && tokens[1].equals("PAGE")) //
-            if (currentEvent != null)
-                currentEvent.getSources().get(currentEvent.getSources().size() - 1).setPage(tokens[2]);
-        if (tokens[0].equals("3") && tokens[1].equals("NOTE")) //
-            if (currentEvent != null) {
-                if (currentEvent.getSources().isEmpty())
-                    currentEvent.getNotes().add(tokens[2]);
-                else
-                    currentEvent.getSources().get(currentEvent.getSources().size() - 1).getNotes().add(tokens[2]);
-            }
-        if (tokens[0].equals("2") && tokens[1].equals("NOTE")) {//
-            if (currentEvent != null)
-                currentEvent.getNotes().add(tokens[2]);
-            else
-                notes.add(tokens[2]);
-        }
-        if (tokens[0].equals("2") && tokens[1].equals("PAGE")) //
-            ((SourceRef) currentEvent).setPage(tokens[2]);
-
-    }
 
 
     @JsonIgnore
