@@ -9,7 +9,7 @@ public class MongoLoader {
     public static void main(String[] args) throws IOException {
 
         String filename = args.length > 0 ? args[0] : "data/Hänninen.ged";
-        Pedigree sukupuu = new MongoPedigree();
+        Pedigree sukupuu = new MongoPedigree("hanninen");
 
         Long start = System.currentTimeMillis();
 

@@ -136,4 +136,10 @@
       </grid>
     </children>
   </grid>
+  <buttonGroups>
+    <group name="suuntaButtonGroup">
+      <member id="ae67d"/>
+      <member id="1ab35"/>
+    </group>
+  </buttonGroups>
 </form>

@@ -23,9 +23,9 @@ public class MongoPedigree implements Pedigree {
     public static final String NOTES = "notes";
     private MongoDatabase db;
 
-    public MongoPedigree() {
+    public MongoPedigree(String db) {
         MongoClient mongoClient = new MongoClient();
-        this.db = mongoClient.getDatabase("test");
+        this.db = mongoClient.getDatabase(db);
 
     }
 
