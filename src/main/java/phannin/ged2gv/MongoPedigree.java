@@ -9,7 +9,9 @@ import phannin.ged2gv.domain.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
@@ -31,6 +33,11 @@ public class MongoPedigree implements Pedigree {
 
     }
 
+    @Override
+    public Map<String, Person> getPersons() {
+        return new HashMap<>();
+
+    }
     @Override
     public Person getPerson(String id) {
         try {

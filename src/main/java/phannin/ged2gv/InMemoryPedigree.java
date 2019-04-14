@@ -17,6 +17,12 @@ public class InMemoryPedigree implements Pedigree {
     private Map<String, Note> notes = new HashMap<>();
 
     @Override
+    public Map<String, Person> getPersons() {
+        return persons;
+
+    }
+
+    @Override
     public void addPerson(Person person) {
         persons.put(person.getId(), person);
     }

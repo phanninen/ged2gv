@@ -3,12 +3,13 @@ package phannin.ged2gv;
 import phannin.ged2gv.domain.*;
 
 import java.io.*;
+import java.util.Map;
 
 /**
  * Created by pasi on 11.9.2016.
  */
 public interface Pedigree {
-//    Map<String, Person> getPersons();
+    Map<String, Person> getPersons();
 //    Map<String, Family> getFamilies();
 
     void addPerson(Person person);

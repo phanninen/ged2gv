@@ -1,7 +1,12 @@
 package phannin.ged2gv;
 
+import phannin.ged2gv.domain.Person;
+
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
+import java.awt.*;
 import java.awt.event.*;
+import java.util.Vector;
 
 public class Start extends JDialog {
     private JPanel contentPane;
@@ -13,18 +18,23 @@ public class Start extends JDialog {
     private JCheckBox useCheckBox;
     private JRadioButton ancestorsRadioButton;
     private JRadioButton desendanrsRadioButton;
+    private JComboBox startPersonSelect;
 
     public Start() {
         startPersonField.setText("@I0047@");
         targetPersonsField.setText("@I0424@");
         fileNameField.addItem("");
-        fileNameField.addItem("data/Tommiska.ged");
+        fileNameField.addItem("data/tommiska.ged");
         fileNameField.addItem("data/puujalka.ged");
         fileNameField.addItem("data/Hänninen.ged");
+
+
         //.setText("data/puujalka.ged");
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+
+        startPersonSelect.setRenderer(new ItemRenderer());
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -35,6 +45,43 @@ public class Start extends JDialog {
         buttonCancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onCancel();
+            }
+        });
+
+        fileNameField.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                JComboBox<String> combo = (JComboBox<String>) event.getSource();
+                Pedigree sukupuu = new InMemoryPedigree();
+
+                Long start = System.currentTimeMillis();
+
+                try {
+                    sukupuu.load((String) combo.getSelectedItem());
+                    startPersonSelect.removeAllItems();
+                    sukupuu.getPersons().values().stream()
+                            .sorted()
+                            .forEach((v) -> {
+                                startPersonSelect.addItem(v);
+                            });
+
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        startPersonSelect.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                JComboBox<String> combo = (JComboBox<String>) event.getSource();
+                Person selectedPerson = (Person) combo.getSelectedItem();
+                if (selectedPerson != null)
+                    startPersonField.setText(selectedPerson.getId());
+
             }
         });
 
@@ -99,7 +146,7 @@ public class Start extends JDialog {
             e.printStackTrace();
         }
 
-        dispose();
+        //       dispose();
     }
 
     private void onCancel() {
@@ -111,4 +158,27 @@ public class Start extends JDialog {
     private void createUIComponents() {
         // TODO: place custom component creation code here
     }
+
+    class ItemRenderer extends BasicComboBoxRenderer {
+        public Component getListCellRendererComponent(
+                JList list, Object value, int index,
+                boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index,
+                    isSelected, cellHasFocus);
+
+            if (value != null) {
+                Person item = (Person) value;
+                setText(item.getFullName());
+            }
+
+            if (index == -1) {
+                Person item = (Person) value;
+                setText(item != null ? item.getFullName() : "");
+            }
+
+
+            return this;
+        }
+    }
+
 }

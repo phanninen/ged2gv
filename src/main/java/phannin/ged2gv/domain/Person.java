@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Person implements Entity {
+public class Person implements Entity, Comparable {
 
     private String id = "";
     private String surname = "";
@@ -137,6 +137,10 @@ public class Person implements Entity {
             return "";
     }
 
+    @JsonIgnore
+    public String getFullName() {
+        return this.surname.isEmpty() ? this.firstname : this.surname + " " + this.firstname;
+    }
     @Override
     public String toString() {
         return "Person{" +
@@ -151,5 +155,12 @@ public class Person implements Entity {
                 ", notes=" + notes +
                 ", sources=" + sources +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Person other = (Person) o;
+
+        return (this.surname + " " + this.firstname + this.id).compareTo(other.surname + " " + other.firstname + other.id);
     }
 }
