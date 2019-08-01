@@ -10,28 +10,23 @@ import java.util.stream.Collectors;
 /**
  * Created by pasi on 20.11.2016.
  */
-public class PedigreeWriter {
-    private final PrintWriter writer;
-    private final ColorMapper colorMapper;
+public class PedigreeWriter extends DotWriter {
 
     public PedigreeWriter(String filename) throws Exception {
-        writer = new PrintWriter(filename, "UTF-8");
-        colorMapper = new ColorMapper();
+        super(filename);
 
     }
 
-    public PedigreeWriter(PrintWriter writer) throws Exception {
-        this.writer = writer;
-        colorMapper = new ColorMapper();
+    public PedigreeWriter(PrintWriter writer) {
+        super(writer);
 
     }
 
     public void writePedigree(Pedigree pedigree, Filter filter, String person) {
-        writer.println("digraph G {rankdir=LR;");
+        initWriter();
         writeTree(pedigree, filter, person);
         //   printGroups(pedigree, filter);
-        writer.println("}");
-        writer.close();
+        closeWriter();
     }
 
     public void writeTree(Pedigree pedigree, Filter filter, String person) {
@@ -46,20 +41,17 @@ public class PedigreeWriter {
             Family fam = pedigree.getFamily(person.getParentsId());
             if (fam != null) {
                 //outputFamily(fam, pedigree);
-                if (fam.hasHusbamd() && filter.containsPerson(fam.getHusband())) {
+                if (fam.hasHusband() && filter.containsPerson(fam.getHusband())) {
                     writeConnections(pedigree, filter, fam.getHusband(), generation + 1);
-                    outputConnection(fam, pedigree.getPerson(fam.getHusband()));
+                    writeParentToFamilyConnector(pedigree.getPerson(fam.getHusband()), fam, false);
                 }
                 if (filter.containsPerson(fam.getHusband()) || filter.containsPerson(fam.getWife())) {
-                    outputConnection(person, fam);
-                }
-                if (filter.containsPerson(fam.getHusband()) && filter.containsPerson(fam.getWife())) {
-                    outputConnection(pedigree.getPerson(fam.getHusband()), pedigree.getPerson(fam.getWife()));
+                    writeFamilyToChildConnector(fam, person, false);
                 }
 
                 if (fam.hasWife() && filter.containsPerson(fam.getWife())) {
                     writeConnections(pedigree, filter, fam.getWife(), generation + 1);
-                    outputConnection(fam, pedigree.getPerson(fam.getWife()));
+                    writeParentToFamilyConnector(pedigree.getPerson(fam.getWife()), fam, false);
                 }
 
 
@@ -67,7 +59,7 @@ public class PedigreeWriter {
         }
     }
 
-    private void outputConnection(Family family, Person person) {
+/*    private void outputConnection(Family family, Person person) {
         if (person != null) {
             writer.println("\"" + family.getId() + "\" -> \"" + person.getId() + "\" [weight=1 " + colorMapper.getLineColor(person) + " ];");
         }
@@ -88,6 +80,8 @@ public class PedigreeWriter {
             //   writer.println("\"" + person.getId() + "\" -> \"" + person2.getId() + "\" ["  + " weight=1 constraint=false];");
         }
     }
+    */
+
     private void printFamilyMap(Pedigree pedigree, Filter filter) {
         //TODO ryhmittely 10-vuotis ryhmiin {rank=same;
         List<Family> orderedFamiles =
@@ -98,27 +92,28 @@ public class PedigreeWriter {
         String currentRank = "";
         for (Family fam : orderedFamiles) {
             String rank = fam.getYear().length() > 0 ? fam.getYear().substring(0, 3) : "";
-            if (!currentRank.isEmpty() && !rank.equals(currentRank))
-                writer.println("}");
+            if (!currentRank.isEmpty() && !rank.equals(currentRank)) {
+                writeRankEnd();
+            }
             if (!rank.equals(currentRank) && !rank.isEmpty()) {
-                writer.println("{rank = same;");
+                writeRankStart();
             }
             currentRank = rank;
-            Person mies = fam.hasHusbamd() ? pedigree.getPerson(fam.getHusband()) : new Person(null);
-            writer.println("\"" + fam.getId() + "\" [shape=circle style=filled " + colorMapper.getColor(mies) + " label=\"" + fam.getYear() + "\"];");
+            writeFamilyNode(pedigree, fam);
 
         }
         if (!currentRank.isEmpty())
-            writer.println("}");
+            writeRankEnd();
 
     }
+
 
     private void printMap(Pedigree pedigree, Filter filter) {
-        filter.allPersons().forEach((p) -> printPerson(pedigree.getPerson(p)));
+        filter.allPersons().forEach((p) -> writePersonNode(pedigree.getPerson(p)));
 
     }
 
-    private void printGroups(Pedigree pedigree, Filter filter) {
+ /*   private void printGroups(Pedigree pedigree, Filter filter) {
         Map<String, Set<String>> groupMap = new HashMap<>();
         filter.allPersons().forEach((p) -> {
             Person person = pedigree.getPerson(p);
@@ -143,17 +138,8 @@ public class PedigreeWriter {
             groupMap.get(sn).forEach((id) -> writer.println("\"" + id + "\";"));
             writer.println("}");
         }));
-    }
+    }*/
 
-    private void printPerson(Person person) {
-        String color = colorMapper.getColor(person);
-        writer.println("\"" + person.getId() + "\" [shape=box style=filled fontname=helvetica " + color +
-                " label=\"" + person.getFirstname() + "\n" +
-                person.getSurname() + "\n" +
-                "(" + person.getBirthYear() + " - " + person.getDeathYear() + ")" +
-                "\"];");
-
-    }
 
     private void outputFamily(Family fam, Pedigree pedigree) {
         System.out.println("-------------------");

@@ -91,7 +91,7 @@ public class Family implements Entity, Comparable<Family> {
     }
 
     @JsonIgnore
-    public boolean hasHusbamd() {
+    public boolean hasHusband() {
         return this.husband != null && !this.husband.isEmpty();
     }
 

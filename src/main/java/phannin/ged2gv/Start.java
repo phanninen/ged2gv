@@ -21,10 +21,12 @@ public class Start extends JDialog {
     private JRadioButton desendanrsRadioButton;
     private JComboBox startPersonSelect;
     private JRadioButton bothRadioButton;
+    private JComboBox targetPersonSelect;
+
+    private PedigreeService service = new PedigreeService();
+
 
     public Start() {
-        startPersonField.setText("@I0047@");
-        targetPersonsField.setText("@I0424@");
         fileNameField.addItem("");
         fileNameField.addItem("data/tommiska.ged");
         fileNameField.addItem("data/puujalka.ged");
@@ -37,6 +39,7 @@ public class Start extends JDialog {
         getRootPane().setDefaultButton(buttonOK);
 
         startPersonSelect.setRenderer(new ItemRenderer());
+        targetPersonSelect.setRenderer(new ItemRenderer());
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -55,23 +58,15 @@ public class Start extends JDialog {
             @Override
             public void actionPerformed(ActionEvent event) {
                 JComboBox<String> combo = (JComboBox<String>) event.getSource();
-                Pedigree sukupuu = new InMemoryPedigree();
 
-                Long start = System.currentTimeMillis();
+                startPersonSelect.removeAllItems();
+                targetPersonSelect.removeAllItems();
+                service.getPersons((String) combo.getSelectedItem()).forEach((v) -> {
+                    startPersonSelect.addItem(v);
+                    targetPersonSelect.addItem(v);
+                });
 
-                try {
-                    sukupuu.load((String) combo.getSelectedItem());
-                    startPersonSelect.removeAllItems();
-                    sukupuu.getPersons().values().stream()
-                            .sorted()
-                            .forEach((v) -> {
-                                startPersonSelect.addItem(v);
-                            });
 
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                    e.printStackTrace();
-                }
             }
         });
 
@@ -83,6 +78,22 @@ public class Start extends JDialog {
                 Person selectedPerson = (Person) combo.getSelectedItem();
                 if (selectedPerson != null)
                     startPersonField.setText(selectedPerson.getId());
+
+            }
+        });
+
+        targetPersonSelect.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                JComboBox<String> combo = (JComboBox<String>) event.getSource();
+                Person selectedPerson = (Person) combo.getSelectedItem();
+                if (selectedPerson != null) {
+                    if (targetPersonsField.getText().isEmpty())
+                        targetPersonsField.setText(selectedPerson.getId());
+                    else
+                        targetPersonsField.setText(targetPersonsField.getText() + ";" + selectedPerson.getId());
+                }
 
             }
         });
@@ -114,56 +125,18 @@ public class Start extends JDialog {
         // add your code here
         System.out.println(startPersonField.getText());
         String person = startPersonField.getText();
-        boolean hasTarget = !targetPersonsField.getText().isEmpty();
-        String[] targets = new String[]{targetPersonsField.getText()};
-        try {
-            //          Pedigree sukupuu = new MongoPedigree();
-            Pedigree sukupuu = new InMemoryPedigree();
 
-            Long start = System.currentTimeMillis();
+        String[] targets = useCheckBox.isSelected() ? targetPersonsField.getText().split(";") : null;
 
-            sukupuu.load((String) fileNameField.getSelectedItem());
-            //sukupuu.dump();
-
-            Filter filter;
-            if (useCheckBox.isSelected())
-                filter = Filter.factory().forAncestors(person, targets, sukupuu);
-            else
-                filter = Filter.factory().allAncestors(person, sukupuu);
-
-            System.out.println("filtertime=" + (System.currentTimeMillis() - start));
-            start = System.currentTimeMillis();
-
-            if (ancestorsRadioButton.isSelected()) {
-                PedigreeWriter writer = new PedigreeWriter("results/pedigree.dot");
-                writer.writePedigree(sukupuu, filter, person);
-            } else if (desendanrsRadioButton.isSelected()) {
-                DecendantsWriter writer = new DecendantsWriter("results/pedigree.dot");
-                writer.writeDecendants(sukupuu, filter, person);
-            } else if (bothRadioButton.isSelected()) {
-                PrintWriter printwriter = new PrintWriter("results/pedigree.dot", "UTF-8");
-                printwriter.println("strict digraph G {rankdir=LR;");
-
-                PedigreeWriter pwriter = new PedigreeWriter(printwriter);
-                pwriter.writeTree(sukupuu, filter, person);
-
-                for (String spouse : sukupuu.getSpouse(person)) {
-                    pwriter.writeTree(sukupuu, Filter.factory().allAncestors(spouse, sukupuu), spouse);
-                }
-
-                DecendantsWriter dwriter = new DecendantsWriter(printwriter);
-                dwriter.writeTree(sukupuu, filter, person);
-                printwriter.println("}");
-                printwriter.close();
-            }
-
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+        if (ancestorsRadioButton.isSelected()) {
+            service.createPedigree((String) fileNameField.getSelectedItem(), person, PedigreeService.Style.ANCESTORS, targets);
+        } else if (desendanrsRadioButton.isSelected()) {
+            service.createPedigree((String) fileNameField.getSelectedItem(), person, PedigreeService.Style.DESENDANTS, null);
+        } else if (bothRadioButton.isSelected()) {
+            service.createPedigree((String) fileNameField.getSelectedItem(), person, PedigreeService.Style.BOTH, targets);
         }
 
-        //       dispose();
+
     }
 
     private void onCancel() {
