@@ -3,6 +3,8 @@ package phannin.ged2gv;
 import phannin.ged2gv.domain.*;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,7 +46,20 @@ public interface Pedigree {
 
         }
 
+    }
 
+    default List<String> getSpouse(String id) {
+        Person p = getPerson(id);
+        List<String> result = new ArrayList<>();
+        for (String fid : p.getFamilyId()) {
+            Family f = getFamily(fid);
+            if (f.getHusband().equals(id))
+                result.add(f.getWife());
+            else {
+                result.add(f.getHusband());
+            }
+        }
+        return result;
     }
 
     void dump();

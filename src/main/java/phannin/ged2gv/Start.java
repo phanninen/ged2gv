@@ -6,7 +6,8 @@ import javax.swing.*;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
+import java.io.PrintWriter;
+
 
 public class Start extends JDialog {
     private JPanel contentPane;
@@ -19,6 +20,7 @@ public class Start extends JDialog {
     private JRadioButton ancestorsRadioButton;
     private JRadioButton desendanrsRadioButton;
     private JComboBox startPersonSelect;
+    private JRadioButton bothRadioButton;
 
     public Start() {
         startPersonField.setText("@I0047@");
@@ -121,7 +123,7 @@ public class Start extends JDialog {
             Long start = System.currentTimeMillis();
 
             sukupuu.load((String) fileNameField.getSelectedItem());
-            sukupuu.dump();
+            //sukupuu.dump();
 
             Filter filter;
             if (useCheckBox.isSelected())
@@ -135,9 +137,24 @@ public class Start extends JDialog {
             if (ancestorsRadioButton.isSelected()) {
                 PedigreeWriter writer = new PedigreeWriter("results/pedigree.dot");
                 writer.writePedigree(sukupuu, filter, person);
-            } else {
+            } else if (desendanrsRadioButton.isSelected()) {
                 DecendantsWriter writer = new DecendantsWriter("results/pedigree.dot");
                 writer.writeDecendants(sukupuu, filter, person);
+            } else if (bothRadioButton.isSelected()) {
+                PrintWriter printwriter = new PrintWriter("results/pedigree.dot", "UTF-8");
+                printwriter.println("strict digraph G {rankdir=LR;");
+
+                PedigreeWriter pwriter = new PedigreeWriter(printwriter);
+                pwriter.writeTree(sukupuu, filter, person);
+
+                for (String spouse : sukupuu.getSpouse(person)) {
+                    pwriter.writeTree(sukupuu, Filter.factory().allAncestors(spouse, sukupuu), spouse);
+                }
+
+                DecendantsWriter dwriter = new DecendantsWriter(printwriter);
+                dwriter.writeTree(sukupuu, filter, person);
+                printwriter.println("}");
+                printwriter.close();
             }
 
 

@@ -19,9 +19,15 @@ public class DecendantsWriter {
 
     }
 
+    public DecendantsWriter(PrintWriter writer) throws Exception {
+        this.writer = writer;
+        colorMapper = new ColorMapper();
+
+    }
+
     public void writeDecendants(Pedigree pedigree, Filter filter, String person) {
         writer.println("digraph G {rankdir=LR;");
-        writeConnections(pedigree, filter, person);
+        writeConnections(pedigree, filter, person, true);
         writePersons(pedigree, filter, person);
         writeFamilies(pedigree, filter, person);
         //   printGroups(pedigree, filter);
@@ -29,7 +35,13 @@ public class DecendantsWriter {
         writer.close();
     }
 
-    private void writeConnections(Pedigree pedigree, Filter filter, String personId) {
+    public void writeTree(Pedigree pedigree, Filter filter, String person) {
+        writeConnections(pedigree, filter, person, false);
+        writePersons(pedigree, filter, person);
+        writeFamilies(pedigree, filter, person);
+    }
+
+    private void writeConnections(Pedigree pedigree, Filter filter, String personId, boolean leftToRight) {
         Person person = pedigree.getPerson(personId);
         System.out.println(person.toString());
         if (person != null) { //&& generation<10
@@ -38,13 +50,13 @@ public class DecendantsWriter {
                 if (fam != null) {
                     //               outputFamily(fam, pedigree);
                     if (fam.getHusband().equals(personId) && fam.getWife() != null)
-                        outputConnection(pedigree.getPerson(fam.getWife()), fam);
+                        outputConnection(pedigree.getPerson(fam.getWife()), fam, leftToRight);
                     if (fam.getWife().equals(personId) && fam.getHusband() != null)
-                        outputConnection(pedigree.getPerson(fam.getHusband()), fam);
-                    outputConnection(person, fam);
+                        outputConnection(pedigree.getPerson(fam.getHusband()), fam, leftToRight);
+                    outputConnection(person, fam, leftToRight);
                     for (String child : fam.getChildren()) {
-                        outputConnection(fam, pedigree.getPerson(child), 100);
-                        writeConnections(pedigree, filter, child);
+                        outputConnection(fam, pedigree.getPerson(child), leftToRight);
+                        writeConnections(pedigree, filter, child, leftToRight);
                     }
 
 
@@ -122,18 +134,26 @@ public class DecendantsWriter {
         }
     }
 
-    private void outputConnection(Family family, Person person, Integer len) {
+    private void outputConnection(Family family, Person person, boolean leftToRight) {
         if (person != null) {
-            writer.println("\"" + family.getId() + "\" -> \"" + person.getId() + "\" [weight=1000 " + colorMapper.getLineColor(person) + " len=" + len.toString() + " ];");
+            if (leftToRight)
+                writer.println("\"" + family.getId() + "\" -> \"" + person.getId() + "\" [weight=1 " + colorMapper.getLineColor(person) + " ];");
+
+            else
+                writer.println("\"" + person.getId() + "\" -> \"" + family.getId() + "\" [weight=1 " + colorMapper.getLineColor(person) + " ];");
         }
 
     }
 
 
-    private void outputConnection(Person person, Family family) {
+    private void outputConnection(Person person, Family family, boolean leftToRight) {
         if (family != null && person != null) {
+            if (leftToRight)
 
-            writer.println("\"" + person.getId() + "\" -> \"" + family.getId() + "\" [" + colorMapper.getLineColor(person) + " weight=1 constraint=true];");
+                writer.println("\"" + person.getId() + "\" -> \"" + family.getId() + "\" [" + colorMapper.getLineColor(person) + " weight=1 constraint=true];");
+            else
+                writer.println("\"" + family.getId() + "\" -> \"" + person.getId() + "\" [" + colorMapper.getLineColor(person) + " weight=1 constraint=true];");
+
         }
     }
 

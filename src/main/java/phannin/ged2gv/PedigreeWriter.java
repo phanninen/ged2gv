@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
  * Created by pasi on 20.11.2016.
  */
 public class PedigreeWriter {
-    private PrintWriter writer;
-    private ColorMapper colorMapper;
+    private final PrintWriter writer;
+    private final ColorMapper colorMapper;
 
     public PedigreeWriter(String filename) throws Exception {
         writer = new PrintWriter(filename, "UTF-8");
@@ -20,14 +20,24 @@ public class PedigreeWriter {
 
     }
 
+    public PedigreeWriter(PrintWriter writer) throws Exception {
+        this.writer = writer;
+        colorMapper = new ColorMapper();
+
+    }
+
     public void writePedigree(Pedigree pedigree, Filter filter, String person) {
         writer.println("digraph G {rankdir=LR;");
-        writeConnections(pedigree, filter, person, 0);
-        printMap(pedigree, filter);
-        printFamilyMap(pedigree, filter);
+        writeTree(pedigree, filter, person);
         //   printGroups(pedigree, filter);
         writer.println("}");
         writer.close();
+    }
+
+    public void writeTree(Pedigree pedigree, Filter filter, String person) {
+        writeConnections(pedigree, filter, person, 0);
+        printMap(pedigree, filter);
+        printFamilyMap(pedigree, filter);
     }
 
     private void writeConnections(Pedigree pedigree, Filter filter, String personId, int generation) {
@@ -35,18 +45,21 @@ public class PedigreeWriter {
         if (person != null) { //&& generation<10
             Family fam = pedigree.getFamily(person.getParentsId());
             if (fam != null) {
-                outputFamily(fam, pedigree);
+                //outputFamily(fam, pedigree);
                 if (fam.hasHusbamd() && filter.containsPerson(fam.getHusband())) {
                     writeConnections(pedigree, filter, fam.getHusband(), generation + 1);
-                    outputConnection(fam, pedigree.getPerson(fam.getHusband()), 10);
+                    outputConnection(fam, pedigree.getPerson(fam.getHusband()));
                 }
-                if (filter.containsPerson(fam.getHusband()) || filter.containsPerson(fam.getWife()))
+                if (filter.containsPerson(fam.getHusband()) || filter.containsPerson(fam.getWife())) {
                     outputConnection(person, fam);
-
+                }
+                if (filter.containsPerson(fam.getHusband()) && filter.containsPerson(fam.getWife())) {
+                    outputConnection(pedigree.getPerson(fam.getHusband()), pedigree.getPerson(fam.getWife()));
+                }
 
                 if (fam.hasWife() && filter.containsPerson(fam.getWife())) {
                     writeConnections(pedigree, filter, fam.getWife(), generation + 1);
-                    outputConnection(fam, pedigree.getPerson(fam.getWife()), 10);
+                    outputConnection(fam, pedigree.getPerson(fam.getWife()));
                 }
 
 
@@ -54,9 +67,9 @@ public class PedigreeWriter {
         }
     }
 
-    private void outputConnection(Family family, Person person, Integer len) {
+    private void outputConnection(Family family, Person person) {
         if (person != null) {
-            writer.println("\"" + family.getId() + "\" -> \"" + person.getId() + "\" [weight=100 " + colorMapper.getLineColor(person) + " len=" + len.toString() + " ];");
+            writer.println("\"" + family.getId() + "\" -> \"" + person.getId() + "\" [weight=1 " + colorMapper.getLineColor(person) + " ];");
         }
 
     }
@@ -65,11 +78,16 @@ public class PedigreeWriter {
     private void outputConnection(Person person, Family family) {
         if (family != null) {
 
-            writer.println("\"" + person.getId() + "\" -> \"" + family.getId() + "\" [" + colorMapper.getLineColor(person) + " weight=10 constraint=true];");
+            writer.println("\"" + person.getId() + "\" -> \"" + family.getId() + "\" [" + colorMapper.getLineColor(person) + " weight=1 constraint=true];");
         }
     }
 
+    private void outputConnection(Person person, Person person2) {
+        if (person != null && person2 != null) {
 
+            //   writer.println("\"" + person.getId() + "\" -> \"" + person2.getId() + "\" ["  + " weight=1 constraint=false];");
+        }
+    }
     private void printFamilyMap(Pedigree pedigree, Filter filter) {
         //TODO ryhmittely 10-vuotis ryhmiin {rank=same;
         List<Family> orderedFamiles =
@@ -147,111 +165,5 @@ public class PedigreeWriter {
             System.out.println("Vaimo: " + nainen.getFirstname() + " " + nainen.getSurname());
     }
 
-    /*
-
-    private static void printFamilyTree(Map<String, Family> families, Map<String, Person> persons, String personId, int generation) {
-        Person person = persons.get(personId);
-//		person.setSelected(true);
-        if (person != null && person.isSelected()) { //&& generation<10
-            Family fam = families.get(person.getParentsId());
-            if (fam != null) {
-
-                if (persons.containsKey(fam.getHusband()) && !persons.get(fam.getHusband()).isSelected()) {
-                    printFamilyTree(families, persons, fam.getHusband(), generation + 1);
-                }
-                outputConnection(person, persons.get(fam.getHusband()));
-
-
-                if (persons.containsKey(fam.getWife()) && !persons.get(fam.getWife()).isSelected()) {
-                    printFamilyTree(families, persons, fam.getWife(), generation + 1);
-                }
-                outputConnection(person, persons.get(fam.getWife()));
-
-
-            } else {
-//				printPersonData(generation, person);
-
-            }
-        }
-    }
-
-    private static void printFamilyTree2(Map<String, Family> families, Map<String, Person> persons, String personId, int generation) {
-        Person person = persons.get(personId);
-//		person.setSelected(true);
-        if (person != null && person.isSelected()) { //&& generation<10
-            Family fam = families.get(person.getParentsId());
-            if (fam != null) {
-
-                if (persons.containsKey(fam.getHusband()) && (!persons.get(fam.getHusband()).isSelected() || true)) {
-                    printFamilyTree2(families, persons, fam.getHusband(), generation + 1);
-                }
-                outputConnection(person, fam);
-                outputConnection(fam, persons.get(fam.getHusband()), 1);
-
-
-                if (persons.containsKey(fam.getWife()) && (!persons.get(fam.getWife()).isSelected() || true)) {
-                    printFamilyTree2(families, persons, fam.getWife(), generation + 1);
-                }
-                outputConnection(fam, persons.get(fam.getWife()), 1);
-
-                //			outputConnection( families.get(person.getParentsId()), persons.get(fam.getHusband()),persons.get(fam.getWife()));
-                //			outputConnection( persons.get(fam.getHusband()),persons.get(fam.getWife()));
-
-            } else {
-//				printPersonData(generation, person);
-
-            }
-        }
-    }
-
-    private static void outputConnection(Family family, Person person, Integer len) {
-        if (person != null && person.isSelected()) {
-            writer.println("\"" + family.getId() + "\" -> \"" + person.getId() + "\" [weight=100 " + colorMapper.getLineColor(person) + " len=" + len.toString() + " ];");
-            //		person.setSelected(true);
-        }
-
-    }
-
-    private static void outputConnection(Family family, Person person) {
-        if (person != null) {
-            writer.println("\"" + family.getId() + "\" -> \"" + person.getId() + "\" {weight=1 len=1 " + colorMapper.getColor(person) + "};");
-            //		person.setSelected(true);
-        }
-
-    }
-
-    private static void outputConnection(Family family, Person mies, Person vaimo) {
-        writer.println("subgraph cluster_" + family.getPlainId() + " {");
-        writer.println("style=filled;");
-        writer.println("color=lightgrey;");
-        writer.println("rank=same;");
-        writer.println("\"" + family.getId() + "\" -> {\"" +
-                (mies != null ? mies.getId() : "") + "\" " + "\"" +
-                (vaimo != null ? vaimo.getId() : "") + "\"}");
-        writer.println("}");
-
-
-    }
-
-
-
-    private static void outputConnection(Person person, Person parent) {
-        if (parent != null && person != null) {
-            writer.println("\"" + person.getId() + "\" -> \"" + parent.getId() + "\" [dir=none constraint=false color=white len=1 weight=1000];");
-//			parent.setSelected(true);
-        }
-    }
-
-    private static void printPersonData(int generation, Person person) {
-        for (int i = 0; i < generation; i++)
-            writer.print("   ");
-        if (person.getSex().equals("M"))
-            writer.print("/");
-        else
-            writer.print("\\");
-        writer.println(person.getFirstname() + " " + person.getSurname());
-    }
-
-*/
 
 }

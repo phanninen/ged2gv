@@ -53,8 +53,11 @@ public class ColorMapper {
 
 
         String color = getColorFor(person.getSurname());
-        if (color != null)
+        if (color != null && color.equals("6"))
+            return " color=grey ";
+        else if (color != null)
             return "colorscheme=" + colorcheme + " color=" + color + " penwidth=4.0 ";
+
         else
             return " color=black ";
 
