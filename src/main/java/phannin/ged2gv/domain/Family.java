@@ -10,8 +10,8 @@ public class Family implements Entity, Comparable<Family> {
     private String husband = "";
     private String wife = "";
     private List<String> children = new ArrayList<>();
-    private List<String> notes = new ArrayList<>();
-    private List<SourceRef> sources = new ArrayList<>();
+    private final List<String> notes = new ArrayList<>();
+    private final List<SourceRef> sources = new ArrayList<>();
 
 
     private Event marriage;
@@ -49,10 +49,6 @@ public class Family implements Entity, Comparable<Family> {
         return children;
     }
 
-    public void setChildren(List<String> children) {
-        this.children = children;
-    }
-
 
     public Event getMarriage() {
         return marriage;
@@ -69,16 +65,6 @@ public class Family implements Entity, Comparable<Family> {
 
     public List<SourceRef> getSources() {
         return sources;
-    }
-
-    private Event currentEvent;
-
-
-
-    @JsonIgnore
-    public String getPlainId() {
-        String[] tokens = this.id.split("@");
-        return tokens[1];
     }
 
 

@@ -9,19 +9,11 @@ public class Event {
 
     private String time = "";
     private String place = "";
-    protected List<String> notes = new ArrayList<>();
-    private List<SourceRef> sources = new ArrayList<>();
-
-    public String getTime() {
-        return time;
-    }
+    protected final List<String> notes = new ArrayList<>();
+    private final List<SourceRef> sources = new ArrayList<>();
 
     public void setTime(String time) {
         this.time = time;
-    }
-
-    public String getPlace() {
-        return place;
     }
 
     public void setPlace(String place) {

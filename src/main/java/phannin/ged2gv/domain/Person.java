@@ -108,16 +108,7 @@ public class Person implements Entity, Comparable {
         this.sources = sources;
     }
 
- /*
 
-    @JsonIgnore
-    public boolean isMukaan() {
-        return this.kuuluuSukuun || this.onPuoliso;
-    }
-//	public void setSelected(boolean mukaan) {
-//		this.mukaan = mukaan;
-//	}
-*/
 
 
 

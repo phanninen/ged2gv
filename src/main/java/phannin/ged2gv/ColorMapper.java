@@ -4,18 +4,19 @@ import phannin.ged2gv.domain.Person;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 /**
  * Created by pasi on 11.9.2016.
  */
 public class ColorMapper {
-    Properties colors = new Properties();
+    private final Properties colors = new Properties();
 
     public ColorMapper() {
         try {
             colors.load(new FileInputStream("colors.properties"));
-            colors.load(new InputStreamReader(new FileInputStream(new File("colors.properties")), Charset.forName("UTF-8")));
+            colors.load(new InputStreamReader(new FileInputStream(new File("colors.properties")), StandardCharsets.UTF_8));
         } catch (FileNotFoundException e) {
 
         } catch (IOException e) {
@@ -23,7 +24,7 @@ public class ColorMapper {
         }
     }
 
-    public String getColorFor(String name) {
+    private String getColorFor(String name) {
         for (Object key : colors.keySet()) {
             if (name.startsWith((String) key))
                 return colors.getProperty((String) key);
@@ -35,12 +36,12 @@ public class ColorMapper {
         // http://www.graphviz.org/content/color-names (colorscheme=paired12)
 
 
-        String colorcheme = colors.getProperty("colorscheme");
+        String colorscheme = colors.getProperty("colorscheme");
 
 
         String color = getColorFor(person.getSurname());
         if (color != null)
-            return "colorscheme=" + colorcheme + " fillcolor=" + color;
+            return "colorscheme=" + colorscheme + " fillcolor=" + color;
         else
             return " color=black fillcolor=white ";
 
@@ -49,14 +50,14 @@ public class ColorMapper {
 
     public String getLineColor(Person person) {
 
-        String colorcheme = colors.getProperty("colorscheme");
+        String colorscheme = colors.getProperty("colorscheme");
 
 
         String color = getColorFor(person.getSurname());
         if (color != null && color.equals("6"))
             return " color=grey ";
         else if (color != null)
-            return "colorscheme=" + colorcheme + " color=" + color + " penwidth=4.0 ";
+            return "colorscheme=" + colorscheme + " color=" + color + " penwidth=4.0 ";
 
         else
             return " color=black ";

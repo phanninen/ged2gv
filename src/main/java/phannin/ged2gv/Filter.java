@@ -11,15 +11,15 @@ import java.util.Set;
  * Created by pasi on 5.12.2016.
  */
 public class Filter {
-    private Set<String> persons = new HashSet<>();
-    private Set<String> families = new HashSet<>();
+    private final Set<String> persons = new HashSet<>();
+    private final Set<String> families = new HashSet<>();
 
-    public void addPerson(String id) {
+    private void addPerson(String id) {
         if (id != null && !id.isEmpty())
             persons.add(id);
     }
 
-    public void addFamily(String id) {
+    private void addFamily(String id) {
         if (id != null && !id.isEmpty())
             families.add(id);
 

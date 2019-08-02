@@ -6,7 +6,6 @@ import javax.swing.*;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.PrintWriter;
 
 
 public class Start extends JDialog {
@@ -18,12 +17,11 @@ public class Start extends JDialog {
     private JTextField targetPersonsField;
     private JCheckBox useCheckBox;
     private JRadioButton ancestorsRadioButton;
-    private JRadioButton desendanrsRadioButton;
+    private final PedigreeService service = new PedigreeService();
     private JComboBox startPersonSelect;
     private JRadioButton bothRadioButton;
     private JComboBox targetPersonSelect;
-
-    private PedigreeService service = new PedigreeService();
+    private JRadioButton descendantsRadioButton;
 
 
     public Start() {
@@ -130,8 +128,8 @@ public class Start extends JDialog {
 
         if (ancestorsRadioButton.isSelected()) {
             service.createPedigree((String) fileNameField.getSelectedItem(), person, PedigreeService.Style.ANCESTORS, targets);
-        } else if (desendanrsRadioButton.isSelected()) {
-            service.createPedigree((String) fileNameField.getSelectedItem(), person, PedigreeService.Style.DESENDANTS, null);
+        } else if (descendantsRadioButton.isSelected()) {
+            service.createPedigree((String) fileNameField.getSelectedItem(), person, PedigreeService.Style.DESCENDANTS, null);
         } else if (bothRadioButton.isSelected()) {
             service.createPedigree((String) fileNameField.getSelectedItem(), person, PedigreeService.Style.BOTH, targets);
         }
@@ -149,7 +147,7 @@ public class Start extends JDialog {
         // TODO: place custom component creation code here
     }
 
-    class ItemRenderer extends BasicComboBoxRenderer {
+    static class ItemRenderer extends BasicComboBoxRenderer {
         public Component getListCellRendererComponent(
                 JList list, Object value, int index,
                 boolean isSelected, boolean cellHasFocus) {

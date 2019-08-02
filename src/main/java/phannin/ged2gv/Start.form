@@ -108,13 +108,13 @@
               <text value="Ancestors"/>
             </properties>
           </component>
-          <component id="1ab35" class="javax.swing.JRadioButton" binding="desendanrsRadioButton" default-binding="true">
+          <component id="1ab35" class="javax.swing.JRadioButton" binding="descendantsRadioButton">
             <constraints>
               <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <selected value="true"/>
-              <text value="Desendants"/>
+              <text value="Descendants"/>
             </properties>
           </component>
           <component id="60bda" class="javax.swing.JComboBox" binding="startPersonSelect">

@@ -30,7 +30,7 @@ public interface Pedigree {
 
     Note getNote(String id);
 
-    default void load(String gedcomFile) throws FileNotFoundException, UnsupportedEncodingException, IOException {
+    default void load(String gedcomFile) throws IOException {
 
         GedcomParser parser = new GedcomParser();
         parser.parse(gedcomFile);

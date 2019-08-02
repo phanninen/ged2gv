@@ -74,12 +74,4 @@ public class DotWriter {
         writer.println("}");
     }
 
-    protected PrintWriter getWriter() {
-        return writer;
-    }
-
-    protected ColorMapper getColorMapper() {
-        return colorMapper;
-    }
-
 }

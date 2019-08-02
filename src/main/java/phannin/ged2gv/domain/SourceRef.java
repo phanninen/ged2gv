@@ -4,7 +4,7 @@ package phannin.ged2gv.domain;
  * Created by pasi on 8.1.2017.
  */
 public class SourceRef extends Event {
-    private String sourceId;
+    private final String sourceId;
     private String page;
 
     public SourceRef(String sourceId) {

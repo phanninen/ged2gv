@@ -10,7 +10,6 @@ import phannin.ged2gv.domain.*;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.mongodb.client.model.Projections.excludeId;
@@ -20,11 +19,11 @@ import static com.mongodb.client.model.Projections.fields;
  * Created by pasi on 30.11.2016.
  */
 public class MongoPedigree implements Pedigree {
-    public static final String PERSONS = "persons";
-    public static final String FAMILIES = "families";
-    public static final String SOURCES = "sources";
-    public static final String NOTES = "notes";
-    private MongoDatabase db;
+    private static final String PERSONS = "persons";
+    private static final String FAMILIES = "families";
+    private static final String SOURCES = "sources";
+    private static final String NOTES = "notes";
+    private final MongoDatabase db;
 
     public MongoPedigree(String db) {
         MongoClient mongoClient = new MongoClient();

@@ -84,13 +84,13 @@ public class PedigreeWriter extends DotWriter {
 
     private void printFamilyMap(Pedigree pedigree, Filter filter) {
         //TODO ryhmittely 10-vuotis ryhmiin {rank=same;
-        List<Family> orderedFamiles =
+        List<Family> orderedFamilies =
                 filter.allFamiles().stream()
                         .map(pedigree::getFamily).sorted()
                         .collect(Collectors.toList());
 
         String currentRank = "";
-        for (Family fam : orderedFamiles) {
+        for (Family fam : orderedFamilies) {
             String rank = fam.getYear().length() > 0 ? fam.getYear().substring(0, 3) : "";
             if (!currentRank.isEmpty() && !rank.equals(currentRank)) {
                 writeRankEnd();

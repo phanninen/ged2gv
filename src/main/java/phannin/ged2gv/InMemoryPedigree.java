@@ -11,10 +11,10 @@ import java.util.*;
  * Created by pasi on 11.9.2016.
  */
 public class InMemoryPedigree implements Pedigree {
-    private Map<String, Person> persons = new HashMap<>();
-    private Map<String, Family> families = new HashMap<>();
-    private Map<String, Source> sources = new HashMap<>();
-    private Map<String, Note> notes = new HashMap<>();
+    private final Map<String, Person> persons = new HashMap<>();
+    private final Map<String, Family> families = new HashMap<>();
+    private final Map<String, Source> sources = new HashMap<>();
+    private final Map<String, Note> notes = new HashMap<>();
 
     @Override
     public Map<String, Person> getPersons() {

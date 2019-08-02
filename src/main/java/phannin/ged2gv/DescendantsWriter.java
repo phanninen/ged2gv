@@ -8,22 +8,21 @@ import java.io.PrintWriter;
 /**
  * Created by pasi on 22.1.2017.
  */
-public class DecendantsWriter extends DotWriter {
+public class DescendantsWriter extends DotWriter {
 
 
-
-    public DecendantsWriter(String filename) throws Exception {
+    public DescendantsWriter(String filename) throws Exception {
         super(filename);
 
 
     }
 
-    public DecendantsWriter(PrintWriter writer) {
+    public DescendantsWriter(PrintWriter writer) {
         super(writer);
 
     }
 
-    public void writeDecendants(Pedigree pedigree, Filter filter, String person) {
+    public void writeDescendants(Pedigree pedigree, Filter filter, String person) {
         initWriter();
         writeConnections(pedigree, filter, person, true);
         writePersons(pedigree, filter, person);
@@ -49,7 +48,7 @@ public class DecendantsWriter extends DotWriter {
                     //               outputFamily(fam, pedigree);
                     if (fam.getHusband().equals(personId) && fam.getWife() != null)
                         writeParentToFamilyConnector(pedigree.getPerson(fam.getWife()), fam, leftToRight);
-                    if (fam.getWife().equals(personId) && fam.getHusband() != null)
+                    if (personId.equals(fam.getWife()) && fam.getHusband() != null)
                         writeParentToFamilyConnector(pedigree.getPerson(fam.getHusband()), fam, leftToRight);
                     writeParentToFamilyConnector(person, fam, leftToRight);
                     for (String child : fam.getChildren()) {
@@ -73,7 +72,7 @@ public class DecendantsWriter extends DotWriter {
                     //               outputFamily(fam, pedigree);
                     if (fam.getHusband().equals(personId) && fam.getWife() != null && !fam.getWife().isEmpty())
                         writePersonNode(pedigree.getPerson(fam.getWife()));
-                    if (fam.getWife().equals(personId) && fam.getHusband() != null && !fam.getHusband().isEmpty())
+                    if (personId.equals(fam.getWife()) && fam.getHusband() != null && !fam.getHusband().isEmpty())
                         writePersonNode(pedigree.getPerson(fam.getHusband()));
                     for (String child : fam.getChildren()) {
                         writePersons(pedigree, filter, child);

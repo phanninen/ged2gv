@@ -3,6 +3,7 @@ package phannin.ged2gv;
 import phannin.ged2gv.domain.Person;
 
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
 public class PedigreeService {
@@ -26,12 +27,12 @@ public class PedigreeService {
                     PedigreeWriter writer = new PedigreeWriter("results/pedigree.dot");
                     writer.writePedigree(sukupuu, filter, person);
                     break;
-                case DESENDANTS:
-                    DecendantsWriter dwriter = new DecendantsWriter("results/pedigree.dot");
-                    dwriter.writeDecendants(sukupuu, filter, person);
+                case DESCENDANTS:
+                    DescendantsWriter dwriter = new DescendantsWriter("results/pedigree.dot");
+                    dwriter.writeDescendants(sukupuu, filter, person);
                     break;
                 case BOTH:
-                    PrintWriter printwriter = new PrintWriter("results/pedigree.dot", "UTF-8");
+                    PrintWriter printwriter = new PrintWriter("results/pedigree.dot", StandardCharsets.UTF_8.name());
                     printwriter.println("strict digraph G {rankdir=LR;");
 
                     PedigreeWriter pwriter = new PedigreeWriter(printwriter);
@@ -41,7 +42,7 @@ public class PedigreeService {
                         pwriter.writeTree(sukupuu, Filter.factory().allAncestors(spouse, sukupuu), spouse);
                     }
 
-                    DecendantsWriter dwriter2 = new DecendantsWriter(printwriter);
+                    DescendantsWriter dwriter2 = new DescendantsWriter(printwriter);
                     dwriter2.writeTree(sukupuu, filter, person);
                     printwriter.println("}");
                     printwriter.close();
@@ -73,5 +74,5 @@ public class PedigreeService {
         }
     }
 
-    public enum Style {ANCESTORS, DESENDANTS, BOTH}
+    public enum Style {ANCESTORS, DESCENDANTS, BOTH}
 }

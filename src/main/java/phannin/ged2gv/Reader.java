@@ -1,8 +1,6 @@
 package phannin.ged2gv;
 
 
-import javax.swing.*;
-
 public class Reader {
 
 
@@ -43,8 +41,8 @@ public class Reader {
         writer.writePedigree(sukupuu, notall, person);
 */
 
-        DecendantsWriter writer = new DecendantsWriter("results/pedigree.dot");
-        writer.writeDecendants(sukupuu, all, person);
+        DescendantsWriter writer = new DescendantsWriter("results/pedigree.dot");
+        writer.writeDescendants(sukupuu, all, person);
         System.out.println("writetime=" + (System.currentTimeMillis() - start));
 
     }
