@@ -73,6 +73,8 @@ public class GedcomParser {
 
         if (tokens[0].equals("2") && tokens[1].equals("GIVN")) //		2 GIVN Basilius Jaakonpoika
             person.setFirstname(tokens[2]);
+        if (tokens[0].equals("2") && tokens[1].equals("NSFX")) //       2 NSFX Heikinpoika
+            person.setPatronym(tokens[2]);
         if (tokens[0].equals("2") && tokens[1].equals("SURN") && person.getSurname().length() == 0) //		2 SURN Hänninen
             person.setSurname(tokens[2]);
         if (tokens[0].equals("1") && tokens[1].equals("SEX")) //		1 SEX M

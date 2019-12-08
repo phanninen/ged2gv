@@ -38,7 +38,8 @@ public class DotWriter {
         String color = colorMapper.getColor(person);
         writer.println("\"" + person.getId() + "\" [shape=box style=filled fontname=helvetica " + color +
                 " label=\"" + person.getFirstname() + "\n" +
-                person.getSurname() + "\n" +
+                        (person.getSurname().isEmpty() ? person.getPatronym() :
+                person.getSurname()) + "\n" +
                 "(" + person.getBirthYear() + " - " + person.getDeathYear() + ")" +
                 "\"];");
 

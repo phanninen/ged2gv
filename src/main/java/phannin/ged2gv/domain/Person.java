@@ -10,6 +10,7 @@ public class Person implements Entity, Comparable {
     private String id = "";
     private String surname = "";
     private String firstname = "";
+    private String patronym = "";
     private String sex = "";
     private List<String> familyId = new ArrayList<>();
     private String parentsId;
@@ -49,6 +50,14 @@ public class Person implements Entity, Comparable {
 
     public void setFirstname(String firstname) {
         this.firstname = firstname;
+    }
+
+    public String getPatronym() {
+        return patronym;
+    }
+
+    public void setPatronym(String patronym) {
+        this.patronym = patronym;
     }
 
     public String getSex() {
@@ -130,13 +139,18 @@ public class Person implements Entity, Comparable {
 
     @JsonIgnore
     public String getFullName() {
-        return this.surname.isEmpty() ? this.firstname : this.surname + " " + this.firstname;
+        return new StringBuilder(this.firstname)
+                .append(this.patronym.isEmpty() ? "" :  " " + this.patronym)
+                .append(this.surname.isEmpty() ? "" : " " + this.surname)
+                .toString();
+
     }
     @Override
     public String toString() {
         return "Person{" +
                 "id='" + id + '\'' +
                 ", surname='" + surname + '\'' +
+                ", patronym='" + patronym + '\'' +
                 ", firstname='" + firstname + '\'' +
                 ", sex='" + sex + '\'' +
                 ", familyId='" + familyId + '\'' +

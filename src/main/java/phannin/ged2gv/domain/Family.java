@@ -75,6 +75,13 @@ public class Family implements Entity, Comparable<Family> {
         else
             return "";
     }
+    @JsonIgnore
+    public String getPlainYear() {
+        if (this.marriage != null)
+            return this.marriage.getPlainYear();
+        else
+            return "";
+    }
 
     @JsonIgnore
     public boolean hasHusband() {
@@ -88,7 +95,7 @@ public class Family implements Entity, Comparable<Family> {
 
     @Override
     public int compareTo(Family o) {
-        return o.getYear().compareTo(this.getYear());
+        return o.getPlainYear().compareTo(this.getPlainYear());
     }
 
     @Override
