@@ -36,6 +36,9 @@ public class Event {
     }
     @JsonIgnore
     public String getPlainYear() {
+        if (this.time.contains("jälkeen")) {
+            return ">"+this.time.substring(0,4);
+        }
         if (this.time.length() > 4)
             return this.time.substring(this.time.length() - 4);
         else
