@@ -26,6 +26,9 @@ public class Event {
 
     @JsonIgnore
     public String getYear() {
+        if (this.time.contains("jälkeen")) {
+            return ">"+this.time.substring(0,4);
+        }
         if (this.time.length() > 4)
             return getPrefix(this.time)+this.time.substring(this.time.length() - 4);
         else

@@ -12,6 +12,9 @@ import java.util.stream.Collectors;
  */
 public class PedigreeWriter extends DotWriter {
 
+    static final boolean useRanks=true;
+    static final boolean useClusters=true;
+
     public PedigreeWriter(String filename) throws Exception {
         super(filename);
 
@@ -41,9 +44,22 @@ public class PedigreeWriter extends DotWriter {
             Family fam = pedigree.getFamily(person.getParentsId());
             if (fam != null) {
                 //outputFamily(fam, pedigree);
+
+                if (useClusters) {
+                    writeLine("subgraph \"cluster" + fam.getHusband() + "\" {");
+                    writeLine("color=gray90;style=filled");
+                }
+                if (fam.hasHusband() && filter.containsPerson(fam.getHusband())) {
+                     writeParentToFamilyConnector(pedigree.getPerson(fam.getHusband()), fam, false);
+                }
+                if (fam.hasWife() && filter.containsPerson(fam.getWife())) {
+                    writeParentToFamilyConnector(pedigree.getPerson(fam.getWife()), fam, false);
+                }
+                if (useClusters) {
+                    writeLine("}");
+                }
                 if (fam.hasHusband() && filter.containsPerson(fam.getHusband())) {
                     writeConnections(pedigree, filter, fam.getHusband(), generation + 1);
-                    writeParentToFamilyConnector(pedigree.getPerson(fam.getHusband()), fam, false);
                 }
                 if (filter.containsPerson(fam.getHusband()) || filter.containsPerson(fam.getWife())) {
                     writeFamilyToChildConnector(fam, person, false);
@@ -51,9 +67,7 @@ public class PedigreeWriter extends DotWriter {
 
                 if (fam.hasWife() && filter.containsPerson(fam.getWife())) {
                     writeConnections(pedigree, filter, fam.getWife(), generation + 1);
-                    writeParentToFamilyConnector(pedigree.getPerson(fam.getWife()), fam, false);
                 }
-
 
             }
         }
@@ -92,10 +106,10 @@ public class PedigreeWriter extends DotWriter {
         String currentRank = "";
         for (Family fam : orderedFamilies) {
             String rank = fam.getYear().length() > 0 ? fam.getYear().substring(0, 3) : "";
-            if (!currentRank.isEmpty() && !rank.equals(currentRank)) {
+            if (useRanks && !currentRank.isEmpty() && !rank.equals(currentRank)) {
                 writeRankEnd();
             }
-            if (!rank.equals(currentRank) && !rank.isEmpty()) {
+            if (useRanks && !rank.equals(currentRank) && !rank.isEmpty()) {
                 writeRankStart();
             }
             currentRank = rank;

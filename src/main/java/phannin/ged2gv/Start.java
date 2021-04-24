@@ -29,6 +29,7 @@ public class Start extends JDialog {
         fileNameField.addItem("data/tommiska.ged");
         fileNameField.addItem("data/puujalka.ged");
         fileNameField.addItem("data/Hänninen.ged");
+        fileNameField.addItem("data/hanninen.ged");
 
 
         //.setText("data/puujalka.ged");

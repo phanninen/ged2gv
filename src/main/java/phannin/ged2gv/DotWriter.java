@@ -20,8 +20,12 @@ public class DotWriter {
         colorMapper = new ColorMapper();
     }
 
+    protected  void writeLine(String str) {
+        writer.write(str+"\n");
+    }
     protected void initWriter() {
         writer.println("digraph G {rankdir=LR;");
+        writer.println("graph [nodesep=0.3, ranksep=0.7; newrank=true];");
     }
 
     protected void closeWriter() {
